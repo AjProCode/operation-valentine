@@ -7,8 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-    <!-- Razorpay SDK -->
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <style>
         :root {
             /* Color Palette extracted from your posters */
@@ -19,6 +17,7 @@
             --text-dark: #2c2c2c;
             --text-light: #666666;
             --white: #ffffff;
+            --whatsapp-green: #25D366;
             
             --container-width: 1200px;
             --section-padding: 80px 20px;
@@ -76,6 +75,18 @@
         .btn-primary:hover {
             background-color: var(--text-dark);
             border-color: var(--text-dark);
+        }
+
+        .btn-whatsapp {
+            background-color: var(--whatsapp-green);
+            border-color: var(--whatsapp-green);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .btn-whatsapp:hover {
+            background-color: #128C7E;
+            border-color: #128C7E;
         }
 
         /* Header */
@@ -310,32 +321,6 @@
             text-align: center;
         }
 
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 40px;
-            text-align: center;
-            max-width: 400px;
-            animation: slideUp 0.4s ease;
-        }
-        
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
     </style>
 </head>
 <body>
@@ -399,7 +384,7 @@
                 </article>
 
                 <!-- Product 2: Cake in Wine Glass -->
-                 <article class="product-card">
+                <article class="product-card">
                     <div class="product-image">
                         <!-- References your uploaded image -->
                         <img src="wgc1.png" 
@@ -421,23 +406,47 @@
             </div>
         </div>
     </section>
+
+                    <article class="product-card">
+                    <div class="product-image">
+                        <!-- References your uploaded image -->
+                        <img src="b.jpeg" 
+                             alt="Brownies" 
+                             class="product-img-element"
+                             onerror="this.src='https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=800'">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Exotic Brownies</h3>
+                        <div class="flavor-tags">
+                            <span class="tag">Exotic Flavors</span>
+                            <span class="tag">Luxury Packaging</span>
+                        </div>
+                        <p class="product-desc">Skip the clichés. A box of gooey chewy brownies adictive enough to share with your partner, Or gobble it up yourself.</p>
+                        <span class="product-price">₹800 (For a pack of 4)</span>
+                        <button class="btn" onclick="prefillOrder('Brownies', 8000)">Order Now</button>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
     <section id="order" class="order-section">
         <div class="container">
             <div class="section-header">
                 <h2>Secure Pre-Order</h2>
-                <p>Fill in the details below to reserve your Valentine's treat.</p>
+                <p>Fill in the details below to send your order via WhatsApp.</p>
             </div>
 
             <div class="form-container">
-                <form id="orderForm" onsubmit="handleRazorpayPayment(event)">
+                <form id="orderForm" onsubmit="handleWhatsAppOrder(event)">
                     <div class="form-group">
                         <label for="name">Your Name</label>
                         <input type="text" id="name" class="form-control" required placeholder="Enter your name">
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" class="form-control" required placeholder="Enter email for receipt">
+                        <label for="email">Email Address (Optional)</label>
+                        <input type="email" id="email" class="form-control" placeholder="Enter email">
                     </div>
 
                     <div class="form-group">
@@ -449,8 +458,9 @@
                         <label for="product-select">Select Product</label>
                         <select id="product-select" class="form-control" onchange="updateTotal()" required>
                             <option value="" disabled selected>Choose a dessert...</option>
-                            <option value="120000" data-name="Tres Leches Delight Tubs">Tres Leches Delight Tubs - ₹1,200</option>
-                            <option value="80000" data-name="Cake in a Wine Glass">Cake in a Wine Glass - ₹800</option>
+                            <option value="120000" data-name="Tres Leches Delight Tubs">Tres Leches Delight Tub- ₹300</option>
+                            <option value="80000" data-name="Cake in a Wine Glass">Cake in a Wine Glass - ₹1000</option>
+                            <option value="80000" data-name="Exotic Brownies">Exotic Brownies - ₹800</option>
                         </select>
                     </div>
                     
@@ -471,7 +481,8 @@
                     </div>
 
                     <div style="text-align: center; margin-top: 30px;">
-                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 1rem;">Pay & Pre-Order</button>
+                        <button type="submit" class="btn btn-whatsapp" style="width: 100%; padding: 15px; font-size: 1rem;">Order via WhatsApp</button>
+                        <p style="font-size: 0.8rem; margin-top: 10px; color: #666;">You will be redirected to WhatsApp to confirm details.</p>
                     </div>
                 </form>
             </div>
@@ -488,24 +499,10 @@
         </div>
     </footer>
 
-    <!-- Success Modal -->
-    <div id="successModal" class="modal">
-        <div class="modal-content">
-            <h3 style="color: var(--primary-red); margin-bottom: 15px;">Order Confirmed!</h3>
-            <p>Thank you for your pre-order of <span id="successProduct" style="font-weight: bold;"></span>.</p>
-            <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">Transaction ID: <span id="orderIdDisplay"></span></p>
-            <button class="btn btn-primary" onclick="closeModal()" style="margin-top: 20px;">Close</button>
-        </div>
-    </div>
-
     <script>
-        // --- RAZORPAY CONFIGURATION ---
-        // 1. Replaced broken live key with a generic TEST key placeholder.
-        // 2. IMPORTANT: You MUST replace 'rzp_test_YOUR_KEY_HERE' with your actual Key ID.
-        const RAZORPAY_KEY_ID = "rzp_test_SDjZflAMwdvJ96"; 
-        
         let currentPrice = 0;
         let selectedProductName = "";
+        const PHONE_NUMBER = "917705982880"; // Your WhatsApp Number
 
         function prefillOrder(productName, priceInCents) {
             const select = document.getElementById('product-select');
@@ -534,70 +531,37 @@
             }
         }
 
-        function handleRazorpayPayment(e) {
+        function handleWhatsAppOrder(e) {
             e.preventDefault();
 
             const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value || "Not provided";
             const phone = document.getElementById('phone').value;
             const quantity = document.getElementById('quantity').value;
-            const totalAmount = Math.round(currentPrice * quantity); 
+            const flavor = document.getElementById('flavor-pref').value || "Standard / Surprise Me"; 
+            const total = (currentPrice * quantity) / 100;
+            const formattedTotal = "₹" + total.toLocaleString('en-IN');
 
-            if (totalAmount <= 0) {
+            if (!selectedProductName) {
                 alert("Please select a product");
                 return;
             }
 
-            var options = {
-                "key": RAZORPAY_KEY_ID, 
-                "amount": totalAmount, 
-                "currency": "INR",
-                "name": "Bake Me A Wish",
-                "description": "Pre-Order: " + selectedProductName,
-                // "image": REMOVED to prevent 404 crash
-                "handler": function (response){
-                    showSuccess(response.razorpay_payment_id);
-                },
-                "prefill": {
-                    "name": name,
-                    "email": email,
-                    "contact": phone
-                },
-                "theme": {
-                    "color": "#8a1c33" 
-                }
-            };
-            
-            try {
-                var rzp1 = new Razorpay(options);
-                rzp1.on('payment.failed', function (response){
-                    alert("Payment Failed: " + response.error.description);
-                });
-                rzp1.open();
-            } catch (err) {
-                console.error("Razorpay Error:", err);
-                alert("Error initializing payment. Check console/Key ID.");
-            }
-        }
+            // Construct WhatsApp Message
+            const message = 
+                `*New Valentine's Order Request* 💖%0A%0A` +
+                `*Name:* ${name}%0A` +
+                `*Product:* ${selectedProductName}%0A` +
+                `*Flavor:* ${flavor}%0A` +
+                `*Quantity:* ${quantity}%0A` +
+                `*Total Price:* ${formattedTotal}%0A` +
+                `*Customer Phone:* ${phone}%0A` +
+                `*Email:* ${email}%0A%0A` +
+                `Please confirm my order and share payment details!`;
 
-        function showSuccess(paymentId) {
-            document.getElementById('successProduct').textContent = selectedProductName;
-            document.getElementById('orderIdDisplay').textContent = paymentId;
-            const modal = document.getElementById('successModal');
-            modal.style.display = 'flex';
-            document.getElementById('orderForm').reset();
-            updateTotal();
-        }
-
-        function closeModal() {
-            document.getElementById('successModal').style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('successModal');
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
+            // Redirect to WhatsApp
+            const whatsappUrl = `https://wa.me/${PHONE_NUMBER}?text=${message}`;
+            window.open(whatsappUrl, '_blank');
         }
     </script>
 </body>
