@@ -426,7 +426,7 @@
                             <span class="tag">Strawberry</span>
                         </div>
                         <p class="product-desc">Surprise your loved ones with these delicious dessert tubs. Perfect for sharing (or keeping all to yourself).</p>
-                        <span class="product-price">₹1,200</span>
+                        <span class="product-price">₹800</span>
                         <button class="btn" onclick="prefillOrder('Tres Leches Delight Tubs', 120000)">Order Now</button>
                     </div>
                 </article>
@@ -447,8 +447,8 @@
                             <span class="tag">Luxury Packaging</span>
                         </div>
                         <p class="product-desc">Skip the clichés. A premium cake layered beautifully in a wine glass. Your words, iced to perfection.</p>
-                        <span class="product-price">₹800</span>
-                        <button class="btn" onclick="prefillOrder('Cake in a Wine Glass', 80000)">Order Now</button>
+                        <span class="product-price">₹1000</span>
+                        <button class="btn" onclick="prefillOrder('Cake in a Wine Glass', 100000)">Order Now</button>
                     </div>
                 </article>
             </div>
@@ -481,8 +481,8 @@
                 <article class="product-card">
                     <div class="product-image">
                         <!-- References your uploaded image -->
-                        <img src="wgc1.png" 
-                             alt="Cake in a Wine Glass" 
+                        <img src="hc.jpeg" 
+                             alt="Mini Assorted Heart Cakes" 
                              class="product-img-element"
                              onerror="this.src='https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=800'">
                     </div>
@@ -492,9 +492,9 @@
                             <span class="tag">Exotic Flavors</span>
                             <span class="tag">Luxury Packaging</span>
                         </div>
-                        <p class="product-desc">A premium cake layered beautifully in a wine glass. Your words, iced to perfection.</p>
-                        <span class="product-price">₹800</span>
-                        <button class="btn" onclick="prefillOrder('Mini Assorted Heart Cakes', )">Order Now</button>
+                        <p class="product-desc">A premium cake layered beautifully in a wine glass.</p>
+                        <span class="product-price">₹1000</span>
+                        <button class="btn" onclick="prefillOrder('Mini Assorted Heart Cakes', 100000)">Order Now</button>
                     </div>
                 </article>
             </div>
@@ -527,9 +527,10 @@
                         <label for="product-select">Select Product</label>
                         <select id="product-select" class="form-control" onchange="updateTotal()" required>
                             <option value="" disabled selected>Choose a dessert...</option>
-                            <option value="120000" data-name="Tres Leches Delight Tubs">Tres Leches Delight Tub- ₹300</option>
-                            <option value="80000" data-name="Cake in a Wine Glass">Cake in a Wine Glass - ₹1000</option>
+                            <option value="40000" data-name="Tres Leches Delight Tubs">Tres Leches Delight Tub- ₹400</option>
+                            <option value="100000" data-name="Cake in a Wine Glass">Cake in a Wine Glass - ₹1000</option>
                             <option value="80000" data-name="Exotic Brownies">Exotic Brownies - ₹800</option>
+                            <option value="100000" data-name="Mini Assorted Heart Cakes">Mini Assorted Heart Cakes - ₹1000</option>
                         </select>
                     </div>
                     
@@ -618,7 +619,7 @@
 
             // Construct WhatsApp Message
             const message = 
-                `*New Valentine's Order Request* 💖%0A%0A` +
+                `*New Valentine's Order Request* 💖 %0A%0A` +
                 `*Name:* ${name}%0A` +
                 `*Product:* ${selectedProductName}%0A` +
                 `*Flavor:* ${flavor}%0A` +
