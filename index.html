@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bake Me A Wish - Valentine's Collection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Razorpay SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        :root {
+            /* Color Palette extracted from your posters */
+            --primary-red: #8a1c33; 
+            --deep-teal: #008080; /* From Tres Leches poster */
+            --soft-pink: #fdf5f6;
+            --cream: #f4e4d8; /* From Logo background */
+            --text-dark: #2c2c2c;
+            --text-light: #666666;
+            --white: #ffffff;
+            
+            --container-width: 1200px;
+            --section-padding: 80px 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-dark);
+            background-color: var(--white);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border: 1px solid var(--primary-red);
+            background-color: transparent;
+            color: var(--primary-red);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-red);
+            color: var(--white);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-red);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--text-dark);
+            border-color: var(--text-dark);
+        }
+
+        /* Header */
+        header {
+            padding: 15px 0;
+            position: absolute;
+            width: 100%;
+            z-index: 10;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(255,255,255,0));
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 80px; /* Adjust based on your logo file */
+            width: auto;
+        }
+
+        .nav-links a {
+            margin-left: 30px;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 85vh;
+            background-color: var(--soft-pink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 700px;
+            height: 700px;
+            border: 1px solid rgba(138, 28, 51, 0.1);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .hero-content {
+            z-index: 2;
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        .subtitle {
+            color: var(--deep-teal);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            display: block;
+            font-weight: 500;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            color: var(--primary-red);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.8rem; }
+        }
+
+        /* Menu Section */
+        .menu-section {
+            padding: var(--section-padding);
+            background-color: var(--white);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 3rem;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 50px;
+        }
+
+        .product-card {
+            background: var(--white);
+            border: 1px solid #f0f0f0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .product-image {
+            height: 400px;
+            background-color: #fafafa;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-img-element {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-img-element {
+            transform: scale(1.03);
+        }
+
+        .product-info {
+            padding: 30px;
+            text-align: center;
+        }
+
+        .product-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .product-desc {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .flavor-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            background: var(--soft-pink);
+            color: var(--primary-red);
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 20px;
+        }
+
+        .product-price {
+            display: block;
+            color: var(--primary-red);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        /* Order Section */
+        .order-section {
+            padding: var(--section-padding);
+            background-color: var(--cream);
+        }
+
+        .form-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 60px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--primary-red);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-red);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #1a1a1a;
+            color: var(--white);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            animation: slideUp 0.4s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo-container">
+                    <!-- Updated to use your logo file -->
+                    <img src="Bake Me a Wish Handmade with Love - 1.png" alt="Bake Me A Wish Logo" class="logo-img" onerror="this.style.display='none'; document.getElementById('text-logo').style.display='block';">
+                    <div id="text-logo" class="logo" style="display:none; font-size: 1.5rem; color: var(--primary-red); font-weight: 700;">Bake Me A Wish</div>
+                </div>
+                <div class="nav-links">
+                    <a href="#collection">Collection</a>
+                    <a href="#order">Order Now</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <span class="subtitle">Handmade with Love</span>
+                <h1>Skip the Clichés.<br>Gift an Experience.</h1>
+                <p style="margin-bottom: 30px; color: var(--text-light);">Luxury desserts for your Valentine, iced to perfection.</p>
+                <a href="#collection" class="btn btn-primary">Pre-Order Now</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="collection" class="menu-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Valentine's Exclusives</h2>
+                <p>Limited Availability. Made with love, served with extra swoon.</p>
+            </div>
+
+            <div class="products-grid">
+                <!-- Product 1: Tres Leches Tubs -->
+                <article class="product-card">
+                    <div class="product-image">
+                        <!-- References your uploaded image -->
+                        <img src="Gemini_Generated_Image_4df7384df7384df7.jpg" 
+                             alt="Tres Leches Delight" 
+                             class="product-img-element"
+                             onerror="this.src='https://images.unsplash.com/photo-1546549032-9571cd6b27df?q=80&w=800'">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Tres Leches Delight Tubs</h3>
+                        <div class="flavor-tags">
+                            <span class="tag">Cold Coffee</span>
+                            <span class="tag">Rasmalai</span>
+                            <span class="tag">Red Velvet</span>
+                            <span class="tag">Strawberry</span>
+                        </div>
+                        <p class="product-desc">Surprise your loved ones with these delicious dessert tubs. Perfect for sharing (or keeping all to yourself).</p>
+                        <span class="product-price">₹1,200</span>
+                        <button class="btn" onclick="prefillOrder('Tres Leches Delight Tubs', 120000)">Order Now</button>
+                    </div>
+                </article>
+
+                <!-- Product 2: Cake in Wine Glass -->
+                <article class="product-card">
+                    <div class="product-image">
+                        <!-- References your uploaded image -->
+                        <img src="Elegant Cake in Wine Glass on Marble Surface.jpg" 
+                             alt="Cake in a Wine Glass" 
+                             class="product-img-element"
+                             onerror="this.src='https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=800'">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Cake in a Wine Glass</h3>
+                        <div class="flavor-tags">
+                            <span class="tag">Exotic Flavors</span>
+                            <span class="tag">Luxury Packaging</span>
+                        </div>
+                        <p class="product-desc">Skip the clichés. A premium cake layered beautifully in a wine glass. Your words, iced to perfection.</p>
+                        <span class="product-price">₹800</span>
+                        <button class="btn" onclick="prefillOrder('Cake in a Wine Glass', 80000)">Order Now</button>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="order" class="order-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Secure Pre-Order</h2>
+                <p>Fill in the details below to reserve your Valentine's treat.</p>
+            </div>
+
+            <div class="form-container">
+                <form id="orderForm" onsubmit="handleRazorpayPayment(event)">
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" class="form-control" required placeholder="Enter your name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" class="form-control" required placeholder="Enter email for receipt">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" class="form-control" required placeholder="For delivery coordination">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product-select">Select Product</label>
+                        <select id="product-select" class="form-control" onchange="updateTotal()" required>
+                            <option value="" disabled selected>Choose a dessert...</option>
+                            <option value="120000" data-name="Tres Leches Delight Tubs">Tres Leches Delight Tubs - ₹1,200</option>
+                            <option value="80000" data-name="Cake in a Wine Glass">Cake in a Wine Glass - ₹800</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Added Flavor preference field -->
+                    <div class="form-group">
+                        <label for="flavor-pref">Flavor Preference (Optional)</label>
+                        <input type="text" id="flavor-pref" class="form-control" placeholder="e.g. Red Velvet, or 'Surprise Me'">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantity">Quantity</label>
+                        <input type="number" id="quantity" class="form-control" min="1" value="1" onchange="updateTotal()" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Total Amount</label>
+                        <div id="totalAmount" style="font-family: 'Cormorant Garamond'; font-size: 2rem; color: var(--primary-red); font-weight: bold;">₹0.00</div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 1rem;">Pay & Pre-Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p style="font-family: 'Cormorant Garamond'; font-size: 1.5rem; margin-bottom: 10px;">Bake Me A Wish</p>
+            <p>Handmade with Love.</p>
+            <div class="copyright">
+                &copy; 2026 Bake Me A Wish. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <h3 style="color: var(--primary-red); margin-bottom: 15px;">Order Confirmed!</h3>
+            <p>Thank you for your pre-order of <span id="successProduct" style="font-weight: bold;"></span>.</p>
+            <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">Transaction ID: <span id="orderIdDisplay"></span></p>
+            <button class="btn btn-primary" onclick="closeModal()" style="margin-top: 20px;">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // --- RAZORPAY CONFIGURATION ---
+        // 1. Replaced broken live key with a generic TEST key placeholder.
+        // 2. IMPORTANT: You MUST replace 'rzp_test_YOUR_KEY_HERE' with your actual Key ID.
+        const RAZORPAY_KEY_ID = "rzp_test_SDjZflAMwdvJ96"; 
+        
+        let currentPrice = 0;
+        let selectedProductName = "";
+
+        function prefillOrder(productName, priceInCents) {
+            const select = document.getElementById('product-select');
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].getAttribute('data-name') === productName) {
+                    select.selectedIndex = i;
+                    break;
+                }
+            }
+            updateTotal();
+            document.getElementById('order').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updateTotal() {
+            const select = document.getElementById('product-select');
+            const qtyInput = document.getElementById('quantity');
+            
+            if (select.value) {
+                currentPrice = parseInt(select.value);
+                selectedProductName = select.options[select.selectedIndex].getAttribute('data-name');
+                const qty = parseInt(qtyInput.value);
+                const total = (currentPrice * qty) / 100;
+                document.getElementById('totalAmount').textContent = "₹" + total.toLocaleString('en-IN');
+            } else {
+                document.getElementById('totalAmount').textContent = "₹0.00";
+            }
+        }
+
+        function handleRazorpayPayment(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const quantity = document.getElementById('quantity').value;
+            const totalAmount = Math.round(currentPrice * quantity); 
+
+            if (totalAmount <= 0) {
+                alert("Please select a product");
+                return;
+            }
+
+            var options = {
+                "key": RAZORPAY_KEY_ID, 
+                "amount": totalAmount, 
+                "currency": "INR",
+                "name": "Bake Me A Wish",
+                "description": "Pre-Order: " + selectedProductName,
+                // "image": REMOVED to prevent 404 crash
+                "handler": function (response){
+                    showSuccess(response.razorpay_payment_id);
+                },
+                "prefill": {
+                    "name": name,
+                    "email": email,
+                    "contact": phone
+                },
+                "theme": {
+                    "color": "#8a1c33" 
+                }
+            };
+            
+            try {
+                var rzp1 = new Razorpay(options);
+                rzp1.on('payment.failed', function (response){
+                    alert("Payment Failed: " + response.error.description);
+                });
+                rzp1.open();
+            } catch (err) {
+                console.error("Razorpay Error:", err);
+                alert("Error initializing payment. Check console/Key ID.");
+            }
+        }
+
+        function showSuccess(paymentId) {
+            document.getElementById('successProduct').textContent = selectedProductName;
+            document.getElementById('orderIdDisplay').textContent = paymentId;
+            const modal = document.getElementById('successModal');
+            modal.style.display = 'flex';
+            document.getElementById('orderForm').reset();
+            updateTotal();
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('successModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
